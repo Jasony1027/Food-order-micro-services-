@@ -1,0 +1,128 @@
+openapi: 3.0.0
+info:
+  description: This API receives order events from food delivery apps
+  version: "1.0.0"
+  title: Food delivery apps API
+  contact:
+    email: jasonyen.cy@gmail.com
+tags:
+  - name: apps
+    description: Order types avalible in food delivery apps
+paths:
+  /orders/pickup:
+    post:
+      tags:
+        - apps
+      summary: stores a pick-up order detail
+      operationId: app.store_pickup_order
+      description: Adds a pick-up order to the system
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: 'invalid input, item not created'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupOrder'
+        description: Order item to add
+  /orders/delivery:
+    post:
+      tags:
+        - apps
+      summary: stores a delivery order detail
+      operationId: app.store_delivery_order
+      description: Adds a delivery order to the system
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: 'invalid input, item not created'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryOrder'
+        description: Order item to add
+
+components:
+  schemas:
+    PickupOrder:
+      type: object
+      required:
+        - order_id
+        - orderer
+        - restaurant
+        - order_type
+        - timestamp
+      properties:
+        order_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer:
+          $ref: '#/components/schemas/Orderer'
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+        order_type:
+          type: string
+          example: pickup
+        timestamp:
+          type: string
+          format: date-time
+          example: "2016-08-29T09:12:33Z"
+    DeliveryOrder:
+      type: object
+      required:
+        - order_id
+        - orderer
+        - restaurant
+        - order_type
+        - timestamp
+      properties:
+        order_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer:
+          $ref: '#/components/schemas/Orderer'
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+        order_type:
+          type: string
+          example: delievery
+        timestamp:
+          type: string
+          format: date-time
+          example: "2016-08-29T09:12:33Z"
+    Orderer:
+      type: object
+      required:
+        - orderer_id
+        - orderer_address
+        - distance_to_restaurant
+      properties:
+        orderer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer_address:
+          type: string
+          example: 1280 5th street
+        distance_to_restaurant:
+          type: number
+          example: 10
+    Restaurant:
+      type: object
+      required:
+        - restaurant_id
+        - restaurant_address
+      properties:
+        restaurant_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        restaurant_address:
+          type: string
+          example: 1007 8th Ave

@@ -1,0 +1,7 @@
+version: 1
+datastore:
+ user: root
+ password: P@ssw0rd
+ hostname: localhost
+ port: 3306
+ db: orders

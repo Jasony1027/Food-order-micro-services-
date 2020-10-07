@@ -1,0 +1,5 @@
+version: 1
+pickup:
+ url: http://localhost:8090/orders/pickup
+delivery:
+ url: http://localhost:8090/orders/delivery
