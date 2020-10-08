@@ -12,42 +12,45 @@ EVENTS_LOG = "events.json"
 BASE_URL = "http://localhost:8090/orders/"
 
 
-def load_config_file():
-    # loads app configuration file
-    with open('app_conf.yml', 'r') as f:
-        app_config = yaml.safe_load(f.read())
-    return app_config
+# def write_to_log(body):
+# """ writes log messages to a json file"""
+#     post_request_msgs = []
+#     if os.path.isfile(EVENTS_LOG):
+#         log = open(EVENTS_LOG, "r")
+#         post_request_msgs = json.loads(log.read())
+#         if len(post_request_msgs) >= MAX_EVENTS:
+#             post_request_msgs.pop(0)
+#     post_request_msgs.append(body)
+#     log = open(EVENTS_LOG, "w")
+#     log.write(json.dumps(post_request_msgs, indent=4))
 
+with open('log_conf.yml', 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+logger = logging.getLogger('basicLogger')
 
-def log_to_file(data):
-    # set up logger with log configuration file to log events output
-    with open('log_conf.yml', 'r') as f:
-        log_config = yaml.safe_load(f.read())
-        logging.config.dictConfig(log_config)
-    logger = logging.getLogger('basicLogger')
-    logger.info("Received event '{}' request with a unique id of {}".format(data["order_type"], data["order_id"]))
+with open('app_conf.yml', 'r') as f:
+    app_config = yaml.safe_load(f.read())
 
 
 def send_post_request(data):
-    # sends POST requests to the storage service
-    app_config_file = load_config_file()
-    url = app_config_file[data["order_type"]]["url"]
+    url = app_config[data["order_type"]]["url"]
     headers = {"content-type": "application/json"}
     response = requests.post(url, json=data, headers=headers)
     return response.status_code
 
 
 def store_pickup_order(body):
-    # sends pick up order details to storage service
+    logger.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     status_code = send_post_request(body)
-    log_to_file(body)
+    logger.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     return NoContent, status_code
 
 
 def store_delivery_order(body):
-    # sends delivery order details to storage service
+    logger.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     status_code = send_post_request(body)
-    log_to_file(body)
+    logger.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     return NoContent, status_code
 
 
