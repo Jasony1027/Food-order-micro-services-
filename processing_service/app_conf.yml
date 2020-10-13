@@ -1,0 +1,10 @@
+version: 1
+datastore:
+  filename: data.json
+scheduler:
+  period_sec: 5
+eventstore:
+  pickup:
+    url: http://localhost:8090/orders/pickup
+  delivery:
+    url: http://localhost:8090/orders/delivery

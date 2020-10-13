@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  description: This API receives order events from food delivery apps
+  version: "1.0.0"
+  title: Food delivery apps API
+  contact:
+    email: jasonyen.cy@gmail.com
+tags:
+  - name: apps
+    description: Order types avalible in food delivery apps
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_stats
+      description: Gets pickup and delivery orders processed statistics
+      responses:
+        '200':
+          description: Successfully returned a list of pickup orders
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/OrderStats'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    OrderStats:
+      type: object
+      required:
+        - num_orders
+        - num_pickup_orders
+        - num_delivery_orders
+        - max_pickup_distance
+        - max_delivery_distance
+        - min_pickup_distance
+        - min_delivery_distance
+      properties:
+        num_orders:
+          type: integer
+          example: 20000
+        num_pickup_orders:
+          type: integer
+          example: 10000
+        num_delivery_orders:
+          type: integer
+          example: 10000
+        max_pickup_distance:
+          type: integer
+          example: 3
+        max_delivery_distance:
+          type: integer
+          example: 50
+        min_pickup_distance:
+          type: integer
+          example: 1
+        min_delivery_distance:
+          type: integer
+          example: 1
+
+
+
