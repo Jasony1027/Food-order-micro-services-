@@ -1,0 +1,9 @@
+{
+    "num_orders": 3089,
+    "num_pickup_orders": 1195,
+    "num_delivery_orders": 1894,
+    "max_pickup_distance": 50,
+    "max_delivery_distance": 50,
+    "min_pickup_distance": 1,
+    "min_delivery_distance": 1
+}

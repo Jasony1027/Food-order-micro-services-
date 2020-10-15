@@ -95,6 +95,11 @@ def populate_stats():
             f.close()
     else:
         current_stats = default_data
+        with open(filename, "w") as f:
+            json.dump(current_stats, f, indent=4)
+            f.close()
+        return
+
     now = datetime.datetime.now()
     now_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     pickup_orders = send_get_request("pickup", now_str)
