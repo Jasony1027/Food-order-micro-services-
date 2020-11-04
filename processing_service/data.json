@@ -1,11 +1,11 @@
 {
-    "num_orders": 1866,
-    "num_pickup_orders": 774,
-    "num_delivery_orders": 1092,
+    "num_orders": 2,
+    "num_pickup_orders": 2,
+    "num_delivery_orders": 0,
     "max_pickup_distance": 50,
-    "max_delivery_distance": 50,
-    "min_pickup_distance": 1,
-    "min_delivery_distance": 1,
-    "timestamp_pickup": "2020-10-15T19:37:59Z",
-    "timestamp_delivery": "2020-10-15T19:37:59Z"
+    "max_delivery_distance": "No data",
+    "min_pickup_distance": 50,
+    "min_delivery_distance": "No data",
+    "timestamp_pickup": "2020-11-04T15:40:58Z",
+    "timestamp_delivery": "2020-11-04T15:40:58Z"
 }
