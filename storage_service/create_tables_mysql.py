@@ -9,6 +9,8 @@ datastore = app_config["datastore"]
 db_conn = mysql.connector.connect(host=datastore["hostname"], user=datastore["user"], password=datastore["password"],
                                   database=datastore["db"])
 db_cursor = db_conn.cursor()
+
+
 db_cursor.execute('''
  CREATE TABLE pickup
  (id INT NOT NULL AUTO_INCREMENT,

@@ -1,0 +1,169 @@
+openapi: 3.0.0
+info:
+  description: This API provides audit info
+  version: "1.0.0"
+  title: Audit API
+  contact:
+    email: jasonyen.cy@gmail.com
+
+paths:
+  /pickup:
+    get:
+      summary: gets a pickup order from history
+      operationId: app.get_pickup_order
+      description: Gets pickup orders from the event store
+      parameters:
+        - name: index
+          in: query
+          description: Gets the pickup at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a pickup event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/PickupOrder'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /delivery:
+    get:
+      summary: gets a delivery order from history
+      operationId: app.get_delivery_order
+      description: Gets delivery orders from the event store
+      parameters:
+        - name: index
+          in: query
+          description: Gets the delivery at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a delivery event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/DeliveryOrder'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    PickupOrder:
+      type: object
+      required:
+        - order_id
+        - orderer
+        - restaurant
+        - order_type
+        - timestamp
+      properties:
+        order_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer:
+          $ref: '#/components/schemas/Orderer'
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+        order_type:
+          type: string
+          example: pickup
+        timestamp:
+          type: string
+          format: date-time
+          example: "2016-08-29T09:12:33Z"
+    DeliveryOrder:
+      type: object
+      required:
+        - order_id
+        - orderer
+        - restaurant
+        - order_type
+        - timestamp
+      properties:
+        order_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer:
+          $ref: '#/components/schemas/Orderer'
+        restaurant:
+          $ref: '#/components/schemas/Restaurant'
+        order_type:
+          type: string
+          example: delievery
+        timestamp:
+          type: string
+          format: date-time
+          example: "2016-08-29T09:12:33Z"
+    Orderer:
+      type: object
+      required:
+        - orderer_id
+        - orderer_address
+        - distance_to_restaurant
+      properties:
+        orderer_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        orderer_address:
+          type: string
+          example: 1280 5th street
+        distance_to_restaurant:
+          type: number
+          example: 10
+    Restaurant:
+      type: object
+      required:
+        - restaurant_id
+        - restaurant_address
+      properties:
+        restaurant_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        restaurant_address:
+          type: string
+          example: 1007 8th Ave

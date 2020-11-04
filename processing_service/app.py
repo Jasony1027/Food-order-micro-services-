@@ -26,7 +26,9 @@ default_data = {"num_orders": 0,
                 "max_pickup_distance": "No data",
                 "max_delivery_distance": "No data",
                 "min_pickup_distance": "No data",
-                "min_delivery_distance": "No data"
+                "min_delivery_distance": "No data",
+                "timestamp_pickup": "2020-09-05T00:00:00Z",
+                "timestamp_delivery": "2020-09-05T00:00:00Z"
                 }
 
 filename = app_config["datastore"]["filename"]
@@ -63,12 +65,20 @@ def get_min(orders, idx, min):
 
 def update_current_stats(pickup_orders, delivery_orders, stats):
     stats["num_orders"] += len(pickup_orders) + len(delivery_orders)
-    stats["num_pickup_orders"] += len(pickup_orders)
-    stats["num_delivery_orders"] += len(delivery_orders)
-    stats["max_pickup_distance"] = get_max(pickup_orders, 0, stats["max_pickup_distance"])
-    stats["max_delivery_distance"] = get_max(delivery_orders, 0, stats["max_delivery_distance"])
-    stats["min_pickup_distance"] = get_min(pickup_orders, 0, stats["min_pickup_distance"])
-    stats["min_delivery_distance"] = get_min(delivery_orders, 0, stats["min_delivery_distance"])
+    now = datetime.datetime.now()
+    now_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    stats["timestamp_pickup"] = now_str
+    stats["timestamp_delivery"] = now_str
+    if len(pickup_orders) != 0:
+        stats["num_pickup_orders"] += len(pickup_orders)
+        stats["max_pickup_distance"] = get_max(pickup_orders, 0, stats["max_pickup_distance"])
+        stats["min_pickup_distance"] = get_min(pickup_orders, 0, stats["min_pickup_distance"])
+
+    if len(delivery_orders) != 0:
+        stats["num_delivery_orders"] += len(delivery_orders)
+        stats["max_delivery_distance"] = get_max(delivery_orders, 0, stats["max_delivery_distance"])
+        stats["min_delivery_distance"] = get_min(delivery_orders, 0, stats["min_delivery_distance"])
+
     logger.debug("Updated statistics: {}".format(stats))
     return stats
 
@@ -100,17 +110,17 @@ def populate_stats():
             f.close()
         return
 
-    now = datetime.datetime.now()
-    now_str = now.strftime("%Y-%m-%dT%H:%M:%SZ")
-    pickup_orders = send_get_request("pickup", now_str)
+    last_pickup_request_time = current_stats["timestamp_pickup"]
+    last_delivery_request_time = current_stats["timestamp_delivery"]
+    pickup_orders = send_get_request("pickup", last_pickup_request_time)
     logger.info("Received {} pickup orders".format(len(pickup_orders)))
-    delivery_orders = send_get_request("delivery", now_str)
+    delivery_orders = send_get_request("delivery", last_delivery_request_time)
     logger.info("Received {} delivery orders".format(len(delivery_orders)))
-    if len(pickup_orders) > 0 or len(delivery_orders) > 0:
-        current_stats = update_current_stats(pickup_orders, delivery_orders, current_stats)
-        with open(filename, "w") as f:
-            json.dump(current_stats, f, indent=4)
-            f.close()
+
+    current_stats = update_current_stats(pickup_orders, delivery_orders, current_stats)
+    with open(filename, "w") as f:
+        json.dump(current_stats, f, indent=4)
+        f.close()
     logger.info("Done")
 
 

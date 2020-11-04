@@ -3,3 +3,7 @@ pickup:
  url: http://localhost:8090/orders/pickup
 delivery:
  url: http://localhost:8090/orders/delivery
+events:
+ hostname: acit-3855-kafka.westus2.cloudapp.azure.com
+ port: 9092
+ topic: events

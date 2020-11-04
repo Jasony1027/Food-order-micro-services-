@@ -10,41 +10,72 @@ tags:
     description: Order types avalible in food delivery apps
 paths:
   /orders/pickup:
-    post:
+    get:
       tags:
         - apps
-      summary: stores a pick-up order detail
-      operationId: app.store_pickup_order
-      description: Adds a pick-up order to the system
+      summary: gets new pickup orders
+      operationId: app.get_pickup_orders
+      description: Gets pickup order after a timestamp
+      parameters:
+        - name: timestamp
+          in: query
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: "2016-08-29T09:12:33Z"
       responses:
-        '201':
-          description: item created
+        '200':
+          description: Successfully returned a list of pickup order events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PickupOrder'
         '400':
-          description: 'invalid input, item not created'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PickupOrder'
-        description: Order item to add
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
   /orders/delivery:
-    post:
+    get:
       tags:
         - apps
-      summary: stores a delivery order detail
-      operationId: app.store_delivery_order
-      description: Adds a delivery order to the system
+      summary: gets new delivery orders
+      operationId: app.get_delivery_orders
+      description: Gets delivery order after a timestamp
+      parameters:
+        - name: timestamp
+          in: query
+          description: Limits the number of items on a page
+          schema:
+            type: string
+            format: date-time
+            example: "2016-08-29T09:12:33Z"
       responses:
-        '201':
-          description: item created
+        '200':
+          description: Successfully returned a list of delivery order events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeliveryOrder'
         '400':
-          description: 'invalid input, item not created'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeliveryOrder'
-        description: Order item to add
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 
 components:
   schemas:
