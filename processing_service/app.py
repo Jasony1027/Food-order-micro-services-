@@ -27,8 +27,8 @@ default_data = {"num_orders": 0,
                 "max_delivery_distance": "No data",
                 "min_pickup_distance": "No data",
                 "min_delivery_distance": "No data",
-                "timestamp_pickup": "2020-09-05T00:00:00Z",
-                "timestamp_delivery": "2020-09-05T00:00:00Z"
+                "timestamp_pickup": "2020-11-04T00:00:00Z",
+                "timestamp_delivery": "2020-11-04T00:00:00Z"
                 }
 
 filename = app_config["datastore"]["filename"]
@@ -70,11 +70,13 @@ def update_current_stats(pickup_orders, delivery_orders, stats):
     stats["timestamp_pickup"] = now_str
     stats["timestamp_delivery"] = now_str
     if len(pickup_orders) != 0:
+        print(pickup_orders)
         stats["num_pickup_orders"] += len(pickup_orders)
         stats["max_pickup_distance"] = get_max(pickup_orders, 0, stats["max_pickup_distance"])
         stats["min_pickup_distance"] = get_min(pickup_orders, 0, stats["min_pickup_distance"])
 
     if len(delivery_orders) != 0:
+        print(delivery_orders)
         stats["num_delivery_orders"] += len(delivery_orders)
         stats["max_delivery_distance"] = get_max(delivery_orders, 0, stats["max_delivery_distance"])
         stats["min_delivery_distance"] = get_min(delivery_orders, 0, stats["min_delivery_distance"])
