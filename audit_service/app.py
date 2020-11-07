@@ -8,6 +8,7 @@ from pykafka import KafkaClient
 import yaml
 import logging
 import logging.config
+from flask_cors import CORS, cross_origin
 
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
@@ -73,6 +74,8 @@ def get_delivery_order(index):
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
+CORS(app.app)
+app.app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("openapi.yml", base_path='/', strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
