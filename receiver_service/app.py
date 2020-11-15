@@ -8,6 +8,7 @@ from pykafka import KafkaClient
 import yaml
 import logging
 import logging.config
+import os
 
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
