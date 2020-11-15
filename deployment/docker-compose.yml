@@ -77,6 +77,7 @@ services:
     volumes:
       - /home/azureuser/config/processing:/config
       - /home/azureuser/logs:/logs
+      - processing-db:/data
     depends_on:
       - "storage"
   audit:
@@ -92,3 +93,4 @@ services:
       - "kafka"
 volumes:
   my-db:
+  processing-db:
