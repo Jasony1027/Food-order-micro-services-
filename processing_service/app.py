@@ -45,6 +45,10 @@ default_data = {"num_orders": 0,
                 "timestamp_pickup": "2020-11-04T00:00:00Z",
                 "timestamp_delivery": "2020-11-04T00:00:00Z"
                 }
+if not os.path.isfile(filename):
+    with open(filename, "w") as f:
+        json.dump(default_data, f, indent=4)
+        f.close()
 
 
 def send_get_request(order_type, timestamp):
@@ -116,13 +120,6 @@ def populate_stats():
         with open(filename, "r") as f:
             current_stats = json.load(f)
             f.close()
-    else:
-        current_stats = default_data
-        with open(filename, "w") as f:
-            json.dump(current_stats, f, indent=4)
-            f.close()
-        return
-
     last_pickup_request_time = current_stats["timestamp_pickup"]
     last_delivery_request_time = current_stats["timestamp_delivery"]
     pickup_orders = send_get_request("pickup", last_pickup_request_time)
