@@ -9,16 +9,31 @@ import yaml
 import logging
 import logging.config
 from flask_cors import CORS, cross_origin
+import os
 
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+with open(app_conf_file, 'r') as f:
+    app_config = yaml.safe_load(f.read())
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+    logger = logging.getLogger('basicLogger')
+    logger.info("App Conf File: %s" % app_conf_file)
+    logger.info("Log Conf File: %s" % log_conf_file)
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
-with open('app_conf.yml', 'r') as f:
-    app_config = yaml.safe_load(f.read())
 
 
-LOGGER = logging.getLogger('basicLogger')
 HOSTNAME = "{}:{}".format(app_config["events"]["hostname"], app_config["events"]["port"])
 TOPIC = app_config["events"]["topic"]
 
@@ -34,7 +49,7 @@ def get_pickup_order(index):
     # the index is large and messages are constantly being received!
     consumer = topic.get_simple_consumer(reset_offset_on_start=True,
                                          consumer_timeout_ms=100)
-    LOGGER.info("Retrieving pickup at index {}".format(index))
+    logger.info("Retrieving pickup at index {}".format(index))
     count = 0
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
@@ -44,7 +59,7 @@ def get_pickup_order(index):
                 # Find the event at the index you want and return code 200
                 return msg["payload"], 200
             count += 1
-    LOGGER.error("Could not find pickup at index %d" % index)
+    logger.error("Could not find pickup at index %d" % index)
     return {"message": "Not Found"}, 404
 
 
@@ -59,7 +74,7 @@ def get_delivery_order(index):
     # the index is large and messages are constantly being received!
     consumer = topic.get_simple_consumer(reset_offset_on_start=True,
                                          consumer_timeout_ms=100)
-    LOGGER.info("Retrieving delivery at index {}".format(index))
+    logger.info("Retrieving delivery at index {}".format(index))
     count = 0
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
@@ -69,7 +84,7 @@ def get_delivery_order(index):
                 # Find the event at the index you want and return code 200
                 return msg["payload"], 200
             count += 1
-    LOGGER.error("Could not find delivery at index %d" % index)
+    logger.error("Could not find delivery at index %d" % index)
     return {"message": "Not Found"}, 404
 
 

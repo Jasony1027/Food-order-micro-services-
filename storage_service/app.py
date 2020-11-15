@@ -13,17 +13,31 @@ from delivery_order import DeliveryOrder
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
+import os
 
-
-with open('app_conf.yml', 'r') as f:
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+with open(app_conf_file, 'r') as f:
     app_config = yaml.safe_load(f.read())
-datastore = app_config["datastore"]
-
+    datastore = app_config["datastore"]
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+    logger = logging.getLogger('basicLogger')
+    logger.info("App Conf File: %s" % app_conf_file)
+    logger.info("Log Conf File: %s" % log_conf_file)
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
-LOGGER = logging.getLogger('basicLogger')
+
 HOSTNAME = "{}:{}".format(app_config["events"]["hostname"], app_config["events"]["port"])
 TOPIC = app_config["events"]["topic"]
 # SQLite
@@ -40,7 +54,7 @@ DB_ENGINE = create_engine("mysql+pymysql://{user}:{password}@{host}:{port}/{data
 
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
-LOGGER.info("Connected to DB. Hostname: {}, Port: {}".format(datastore["hostname"], datastore["port"]))
+logger.info("Connected to DB. Hostname: {}, Port: {}".format(datastore["hostname"], datastore["port"]))
 
 
 def get_pickup_orders(timestamp):
@@ -54,7 +68,7 @@ def get_pickup_orders(timestamp):
         orders_list.append(order.to_dict())
     session.close()
 
-    LOGGER.info("Query for pickup order after {} returns {} results".format(timestamp, len(orders_list)))
+    logger.info("Query for pickup order after {} returns {} results".format(timestamp, len(orders_list)))
     return orders_list, 200
 
 
@@ -68,7 +82,7 @@ def get_delivery_orders(timestamp):
         orders_list.append(order.to_dict())
     session.close()
 
-    LOGGER.info("Query for pickup order after {} returns {} results".format(timestamp, len(orders_list)))
+    logger.info("Query for pickup order after {} returns {} results".format(timestamp, len(orders_list)))
     return orders_list, 200
 
 
@@ -89,7 +103,7 @@ def store_pickup_order(body):
 
     session.commit()
     session.close()
-    LOGGER.debug("Stored event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.debug("Stored event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
 
 
 def store_delivery_order(body):
@@ -109,7 +123,7 @@ def store_delivery_order(body):
 
     session.commit()
     session.close()
-    LOGGER.debug("Stored event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.debug("Stored event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
 
 
 def process_messages():
@@ -127,7 +141,7 @@ def process_messages():
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
         msg = json.loads(msg_str)
-        LOGGER.info("Message: {}".format(msg))
+        logger.info("Message: {}".format(msg))
         payload = msg["payload"]
         if msg["type"] == "pickup":  # Change this to your event type
             # Store the event1 (i.e., the payload) to the DB

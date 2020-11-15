@@ -8,18 +8,33 @@ from pykafka import KafkaClient
 import yaml
 import logging
 import logging.config
+import os
 
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+with open(app_conf_file, 'r') as f:
+    app_config = yaml.safe_load(f.read())
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+    logger = logging.getLogger('basicLogger')
+    logger.info("App Conf File: %s" % app_conf_file)
+    logger.info("Log Conf File: %s" % log_conf_file)
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
-with open('app_conf.yml', 'r') as f:
-    app_config = yaml.safe_load(f.read())
 
 MAX_EVENTS = 10
 EVENTS_LOG = "events.json"
 BASE_URL = "http://localhost:8090/orders/"
-LOGGER = logging.getLogger('basicLogger')
 HOSTNAME = "{}:{}".format(app_config["events"]["hostname"], app_config["events"]["port"])
 TOPIC = app_config["events"]["topic"]
 
@@ -34,7 +49,7 @@ def send_post_request(data, order_type):
 
 def store_pickup_order(body):
     """ processes received pickup order data"""
-    LOGGER.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     client = KafkaClient(hosts=HOSTNAME)
     topic = client.topics[TOPIC]
     producer = topic.get_sync_producer()
@@ -45,13 +60,13 @@ def store_pickup_order(body):
            "payload": body}
     msg_str = json.dumps(msg)
     producer.produce(msg_str.encode('utf-8'))
-    LOGGER.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     return NoContent, 201
 
 
 def store_delivery_order(body):
     """ processes received delivery order data"""
-    LOGGER.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.info("Received event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     client = KafkaClient(hosts=HOSTNAME)
     topic = client.topics[TOPIC]
     producer = topic.get_sync_producer()
@@ -62,7 +77,7 @@ def store_delivery_order(body):
            "payload": body}
     msg_str = json.dumps(msg)
     producer.produce(msg_str.encode('utf-8'))
-    LOGGER.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
+    logger.info("Processed event '{}' request with a unique id of {}".format(body["order_type"], body["order_id"]))
     return NoContent, 201
 
 
