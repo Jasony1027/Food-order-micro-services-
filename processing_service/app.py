@@ -21,6 +21,7 @@ else:
     log_conf_file = "log_conf.yml"
 with open(app_conf_file, 'r') as f:
     app_config = yaml.safe_load(f.read())
+    filename = app_config["datastore"]["filename"]
 # External Logging Configuration
 with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
@@ -44,8 +45,6 @@ default_data = {"num_orders": 0,
                 "timestamp_pickup": "2020-11-04T00:00:00Z",
                 "timestamp_delivery": "2020-11-04T00:00:00Z"
                 }
-
-filename = app_config["datastore"]["filename"]
 
 
 def send_get_request(order_type, timestamp):
@@ -84,13 +83,11 @@ def update_current_stats(pickup_orders, delivery_orders, stats):
     stats["timestamp_pickup"] = now_str
     stats["timestamp_delivery"] = now_str
     if len(pickup_orders) != 0:
-        print(pickup_orders)
         stats["num_pickup_orders"] += len(pickup_orders)
         stats["max_pickup_distance"] = get_max(pickup_orders, 0, stats["max_pickup_distance"])
         stats["min_pickup_distance"] = get_min(pickup_orders, 0, stats["min_pickup_distance"])
 
     if len(delivery_orders) != 0:
-        print(delivery_orders)
         stats["num_delivery_orders"] += len(delivery_orders)
         stats["max_delivery_distance"] = get_max(delivery_orders, 0, stats["max_delivery_distance"])
         stats["min_delivery_distance"] = get_min(delivery_orders, 0, stats["min_delivery_distance"])
