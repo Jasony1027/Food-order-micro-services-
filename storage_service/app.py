@@ -143,11 +143,11 @@ def process_messages():
         msg = json.loads(msg_str)
         logger.info("Message: {}".format(msg))
         payload = msg["payload"]
-        if msg["type"] == "pickup":  # Change this to your event type
-            # Store the event1 (i.e., the payload) to the DB
+        if msg["type"] == "pickup": 
+            # Store the pickup order (i.e., the payload) to the DB
             store_pickup_order(payload)
         elif msg["type"] == "delivery":  # Change this to your event type
-            # Store the event2 (i.e., the payload) to the DB
+            # Store the delivery order (i.e., the payload) to the DB
             store_delivery_order(payload)
 
         # Commit the new message as being read
@@ -155,7 +155,7 @@ def process_messages():
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
-app.add_api("openapi.yml", base_path='/', strict_validation=True, validate_responses=True)
+app.add_api("openapi.yml", base_path='/storage', strict_validation=True, validate_responses=True)
 
 if __name__ == "__main__":
     t1 = Thread(target=process_messages)
