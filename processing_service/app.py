@@ -48,7 +48,7 @@ default_data = {"num_orders": 0,
 
 if not os.path.exists(filename):
     logger.info("creating {}".format(filename))
-    with open(filename, "w") as f:
+    with open(filename, "w+") as f:
         json.dump(default_data, f, indent=4)
         f.close()
 
