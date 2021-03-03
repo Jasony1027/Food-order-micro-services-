@@ -28,11 +28,8 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: 'events'
-      # So you don't have to use root, but you can if you like
       MYSQL_USER: 'root'
-      # You can use whatever password you like
       MYSQL_PASSWORD: 'P@ssw0rd'
-      # Password for root access
       MYSQL_ROOT_PASSWORD: 'P@ssw0rd'
     ports:
       # <Port exposed> : < MySQL Port running inside container>
