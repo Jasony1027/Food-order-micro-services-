@@ -146,7 +146,7 @@ def process_messages():
         if msg["type"] == "pickup": 
             # Store the pickup order (i.e., the payload) to the DB
             store_pickup_order(payload)
-        elif msg["type"] == "delivery":  # Change this to your event type
+        elif msg["type"] == "delivery":  
             # Store the delivery order (i.e., the payload) to the DB
             store_delivery_order(payload)
 
