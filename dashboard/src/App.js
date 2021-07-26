@@ -3,11 +3,11 @@ import axios from "axios";
 import "./App.css";
 export default function App() {
   const statsApiURL =
-    "http://acit-3855-kafka.westus2.cloudapp.azure.com:8100/stats";
+    "http://acit-3855-kafka.westus2.cloudapp.azure.com/processing/stats";
   const pickupApiUrl =
-    "http://acit-3855-kafka.westus2.cloudapp.azure.com:8110/pickup?index=0";
+    "http://acit-3855-kafka.westus2.cloudapp.azure.com/audit/pickup?index=0";
   const deliveryApiUrl =
-    "http://acit-3855-kafka.westus2.cloudapp.azure.com:8110/delivery?index=0";
+    "http://acit-3855-kafka.westus2.cloudapp.azure.com/audit/delivery?index=0";
   const imgURL =
     "https://www.freelogodesign.org/file/app/client/thumb/79709edb-2b24-48ff-9037-79ce54be60c5_200x200.png?1605156478449";
   const [data, setData] = useState({ stats: {}, pickup: {}, delivery: {} });
